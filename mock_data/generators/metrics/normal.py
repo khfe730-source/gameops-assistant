@@ -1,14 +1,20 @@
 """Seed-based deterministic game server metrics generator."""
 
+import hashlib
 import math
 import random
 from datetime import datetime
 
 
 def _make_rng(seed: int, timestamp: datetime, salt: str) -> random.Random:
-    """Create a deterministic RNG from seed, timestamp (hour), and salt."""
-    hour_bucket = timestamp.replace(minute=0, second=0, microsecond=0).timestamp()
-    combined = hash((seed, int(hour_bucket), salt))
+    """Create a deterministic RNG from seed, timestamp (hour), and salt.
+
+    Uses hashlib instead of hash() to guarantee cross-process stability
+    (Python's built-in hash() is randomized per process by default).
+    """
+    hour_bucket = int(timestamp.replace(minute=0, second=0, microsecond=0).timestamp())
+    key = f"{seed}:{hour_bucket}:{salt}".encode()
+    combined = int(hashlib.sha256(key).hexdigest()[:16], 16)
     return random.Random(combined)
 
 

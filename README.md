@@ -23,14 +23,20 @@ gameops-assistant/
 │
 ├── mock_data/                  # 결정적 가짜 데이터 생성기
 │   ├── __init__.py
-│   └── metrics_generator.py   # seed 기반 메트릭 생성 (구현 완료)
+│   ├── scenarios.py            # 시나리오별 메트릭 파사드 (구현 완료)
+│   ├── generators/
+│   │   └── metrics/
+│   │       ├── normal.py              # 정상 상태 메트릭 생성기 (구현 완료)
+│   │       └── incident.py            # 인시던트 상태 메트릭 생성기 (구현 완료)
+│   └── fixtures/               # 시나리오별 정적 스냅샷 JSON (구현 완료)
 │
 ├── .claude/
 │   ├── agents/                 # Custom Subagent 정의 (markdown)
 │   └── skills/                 # Skills — 절차적 지식 주입
 │
 ├── tests/
-│   └── test_metrics_generator.py
+│   ├── test_metrics_generator.py
+│   └── test_scenarios.py
 │
 ├── main.py
 ├── pyproject.toml
@@ -78,6 +84,31 @@ uv sync
 }
 ```
 
+인시던트 시나리오를 시뮬레이션하려면 환경변수로 시나리오를 선택합니다.
+
+```json
+{
+  "mcpServers": {
+    "metrics": {
+      "command": "uv",
+      "args": ["run", "python", "-m", "mcp_servers.metrics_server"],
+      "env": {
+        "METRICS_SCENARIO": "incident_ccu_spike"
+      }
+    }
+  }
+}
+```
+
+지원 시나리오:
+| 시나리오 | 설명 |
+|---------|------|
+| `normal` (기본값) | 정상 상태 |
+| `incident_ccu_spike` | CCU 3배 폭증 · 큐 과부하 · 에러율 상승 |
+| `incident_queue_stuck` | 매치메이킹 큐 고착 (15–30분 대기) |
+| `incident_error_spike` | 에러율 급증 (15–30%) |
+| `incident_zone_latency` | ap-northeast-1 레이턴시 급증 (p99 > 5000ms) |
+
 ### 2. Claude Code에서 메트릭 조회
 
 MCP 서버 등록 후 Claude Code에서 자연어로 질의합니다.
@@ -116,7 +147,8 @@ uv run ruff check .
 
 | 모듈 | 테스트 파일 | 케이스 수 |
 |------|------------|----------|
-| `mock_data/metrics_generator.py` | `tests/test_metrics_generator.py` | 14 |
+| `mock_data/generators/metrics/normal.py` | `tests/test_metrics_generator.py` | 14 |
+| `mock_data/scenarios.py` + `generators/metrics/incident.py` | `tests/test_scenarios.py` | 22 |
 
 ---
 
@@ -170,7 +202,7 @@ uv run ruff check .
 ## 진행 상황
 - [x] Day 1: 환경 셋업
 - [x] Day 2: MCP 서버 1 — 메트릭 서버 + 모킹 데이터 생성기
-- [ ] Day 3: 모킹 시나리오 (정상 vs 인시던트 상태)
+- [x] Day 3: 모킹 시나리오 (정상 vs 인시던트 상태)
 - [ ] Day 4: MCP 서버 2 — 인시던트 DB 서버
 - [ ] Day 5: MCP 서버 3 — 로그 검색 서버
 - [ ] Week 2: Skills 2종 구현 (인시던트 대응, 포스트모템)

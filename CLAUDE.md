@@ -16,7 +16,10 @@
 
 ## 디렉토리 구조
 - `mcp_servers/`: MCP 서버 구현 (각 서버는 독립 프로세스)
-- `mock_data/`: 가짜 게임 데이터 생성기 + 미리 정의된 시나리오
+- `mock_data/scenarios.py`: 시나리오 파사드 (Scenario enum + get_* 함수)
+- `mock_data/generators/<domain>/normal.py`: 도메인별 정상 상태 생성기
+- `mock_data/generators/<domain>/incident.py`: 도메인별 인시던트 상태 생성기
+- `mock_data/fixtures/`: 시나리오별 정적 JSON 스냅샷
 - `.claude/agents/`: Custom Subagent 정의 (markdown)
 - `.claude/skills/`: Skills (절차적 지식)
 - `tests/`: 단위/통합 테스트

@@ -1,0 +1,30 @@
+{
+  "scenario": "incident_ccu_spike",
+  "timestamp": "2026-04-29T21:00:00",
+  "ccu": 15003,
+  "matchmaking_queue": {
+    "queue_length": 3557,
+    "avg_wait_seconds": 473.0
+  },
+  "error_rate": {
+    "rate_percent": 10.28,
+    "total_errors": 322
+  },
+  "latency": {
+    "ap-northeast-1": {
+      "p50_ms": 28.2,
+      "p95_ms": 53.5,
+      "p99_ms": 90.0
+    },
+    "ap-northeast-2": {
+      "p50_ms": 30.7,
+      "p95_ms": 72.2,
+      "p99_ms": 129.9
+    },
+    "us-west-2": {
+      "p50_ms": 55.5,
+      "p95_ms": 136.3,
+      "p99_ms": 197.0
+    }
+  }
+}
