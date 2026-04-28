@@ -65,13 +65,14 @@ uv sync
 
 프로젝트 루트에 `.mcp.json` 파일을 생성합니다.
 
+`.mcp.json` (프로젝트 루트에 포함되어 있으므로 별도 설정 불필요)
+
 ```json
 {
   "mcpServers": {
     "metrics": {
       "command": "uv",
-      "args": ["run", "python", "-m", "mcp_servers.metrics_server"],
-      "cwd": "/path/to/gameops-assistant"
+      "args": ["run", "python", "-m", "mcp_servers.metrics_server"]
     }
   }
 }
