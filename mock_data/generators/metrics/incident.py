@@ -4,7 +4,7 @@ import hashlib
 import random
 from datetime import datetime
 
-from mock_data.generators.metrics import normal as metrics_generator
+from mock_data.generators.metrics import normal as metrics_normal
 
 
 def _make_rng(seed: int, ts: datetime, salt: str) -> random.Random:
@@ -17,7 +17,7 @@ def _make_rng(seed: int, ts: datetime, salt: str) -> random.Random:
 
 def ccu_spike(seed: int, ts: datetime) -> int:
     """Return 3× normal CCU simulating a sudden traffic surge."""
-    return metrics_generator.generate_ccu(seed, ts) * 3
+    return metrics_normal.generate_ccu(seed, ts) * 3
 
 
 def queue_overloaded(seed: int, ts: datetime) -> dict:
@@ -32,7 +32,7 @@ def queue_overloaded(seed: int, ts: datetime) -> dict:
 def queue_stuck(seed: int, ts: datetime) -> dict:
     """Return stuck matchmaking queue simulating a deadlock-like state."""
     rng = _make_rng(seed, ts, "queue_stuck")
-    ccu = metrics_generator.generate_ccu(seed, ts)
+    ccu = metrics_normal.generate_ccu(seed, ts)
     # 25–35% of active users stuck in queue, 15–30 min wait
     queue_length = int(ccu * rng.uniform(0.25, 0.35))
     avg_wait_seconds = round(rng.uniform(900.0, 1800.0), 1)
@@ -57,7 +57,7 @@ def error_elevated(seed: int, ts: datetime) -> dict:
 
 def zone_latency_spike(seed: int, ts: datetime) -> dict:
     """Return latency data with ap-northeast-1 severely degraded."""
-    result = metrics_generator.generate_latency(seed, ts)
+    result = metrics_normal.generate_latency(seed, ts)
     rng = _make_rng(seed, ts, "zone_lat_spike")
     # ap-northeast-1: network degradation (400–800ms p50, cascading p95/p99)
     p50 = round(rng.uniform(400.0, 800.0), 1)
