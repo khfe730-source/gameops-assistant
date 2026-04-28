@@ -147,8 +147,8 @@ uv run ruff check .
 
 | 모듈 | 테스트 파일 | 케이스 수 |
 |------|------------|----------|
-| `mock_data/metrics_generator.py` | `tests/test_metrics_generator.py` | 14 |
-| `mock_data/scenarios.py` + `generators/incident.py` | `tests/test_scenarios.py` | 22 |
+| `mock_data/generators/metrics/normal.py` | `tests/test_metrics_generator.py` | 14 |
+| `mock_data/scenarios.py` + `generators/metrics/incident.py` | `tests/test_scenarios.py` | 22 |
 
 ---
 
