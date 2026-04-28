@@ -2,7 +2,6 @@
 
 from datetime import datetime
 
-import pytest
 
 from mock_data.metrics_generator import (
     generate_ccu,
