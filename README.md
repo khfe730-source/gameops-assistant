@@ -23,10 +23,12 @@ gameops-assistant/
 │
 ├── mock_data/                  # 결정적 가짜 데이터 생성기
 │   ├── __init__.py
-│   ├── metrics_generator.py    # seed 기반 메트릭 생성 (구현 완료)
 │   ├── scenarios.py            # 시나리오별 메트릭 파사드 (구현 완료)
 │   ├── generators/
-│   │   └── incident.py         # 인시던트 시나리오 생성기 (구현 완료)
+│   │   ├── normal/
+│   │   │   └── metrics_generator.py   # 정상 상태 생성기 (구현 완료)
+│   │   └── incident/
+│   │       └── metrics_generator.py   # 인시던트 상태 생성기 (구현 완료)
 │   └── fixtures/               # 시나리오별 정적 스냅샷 JSON (구현 완료)
 │
 ├── .claude/

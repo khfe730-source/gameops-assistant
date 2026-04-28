@@ -3,8 +3,8 @@
 from datetime import datetime
 from enum import Enum
 
-from mock_data import metrics_generator
-from mock_data.generators import incident
+from mock_data.generators.incident import metrics_generator as incident
+from mock_data.generators.normal import metrics_generator
 
 
 class Scenario(str, Enum):
