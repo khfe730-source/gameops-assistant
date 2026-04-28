@@ -9,6 +9,116 @@ MCP 서버 / Custom Skills / Subagent를 활용한 4주 학습 프로젝트.
 - Subagent로 컨텍스트 분리 및 병렬 처리
 - 게임 서버 운영 도메인을 LLM 워크플로로 자동화
 
+---
+
+## 프로젝트 구조
+
+```
+gameops-assistant/
+├── mcp_servers/                # MCP 서버 (각 서버는 독립 프로세스)
+│   ├── __init__.py
+│   ├── metrics_server.py       # CCU · 큐 · 에러율 · 레이턴시 (구현 완료)
+│   ├── incident_db_server.py   # 과거 장애 이력 조회 (미구현)
+│   └── log_search_server.py    # 로그 검색 Loki/Elastic 모킹 (미구현)
+│
+├── mock_data/                  # 결정적 가짜 데이터 생성기
+│   ├── __init__.py
+│   └── metrics_generator.py   # seed 기반 메트릭 생성 (구현 완료)
+│
+├── .claude/
+│   ├── agents/                 # Custom Subagent 정의 (markdown)
+│   └── skills/                 # Skills — 절차적 지식 주입
+│
+├── tests/
+│   └── test_metrics_generator.py
+│
+├── main.py
+├── pyproject.toml
+└── CLAUDE.md
+```
+
+---
+
+## 시작하기
+
+### 요구사항
+- Python 3.12+
+- [uv](https://docs.astral.sh/uv/) 패키지 매니저
+- [Claude Code](https://claude.ai/code) CLI
+
+### 설치
+
+```bash
+# 저장소 클론
+git clone https://github.com/khfe730-source/gameops-assistant.git
+cd gameops-assistant
+
+# 의존성 설치
+uv sync
+```
+
+---
+
+## 사용 방법
+
+### 1. MCP 서버를 Claude Code에 등록
+
+프로젝트 루트에 `.mcp.json` 파일을 생성합니다.
+
+```json
+{
+  "mcpServers": {
+    "metrics": {
+      "command": "uv",
+      "args": ["run", "python", "-m", "mcp_servers.metrics_server"],
+      "cwd": "/path/to/gameops-assistant"
+    }
+  }
+}
+```
+
+### 2. Claude Code에서 메트릭 조회
+
+MCP 서버 등록 후 Claude Code에서 자연어로 질의합니다.
+
+```
+지금 CCU 얼마야?
+매치메이킹 큐 상태 알려줘
+서버 레이턴시 확인해줘
+```
+
+### 3. 핵심 시나리오 (전체 완성 후)
+
+> "지금 매치메이킹 큐가 평소보다 길어. 원인 파악하고 대응 방안 알려줘"
+
+1. 메인 에이전트가 **메트릭 서브에이전트** + **로그 서브에이전트** 병렬 호출
+2. 양쪽 결과를 종합해 병목 원인 특정
+3. **인시던트 대응 Skill** 참조 → 단계별 완화·복구 가이드 출력
+4. 인시던트 종료 후 **포스트모템 서브에이전트**가 문서 자동 생성
+
+---
+
+## 테스트
+
+```bash
+# 전체 테스트 실행
+uv run pytest
+
+# 특정 파일만
+uv run pytest tests/test_metrics_generator.py -v
+
+# 린터
+uv run ruff check .
+```
+
+현재 테스트 커버리지:
+
+| 모듈 | 테스트 파일 | 케이스 수 |
+|------|------------|----------|
+| `mock_data/metrics_generator.py` | `tests/test_metrics_generator.py` | 14 |
+
+---
+
 ## 아키텍처
 
 ```
@@ -16,7 +126,7 @@ MCP 서버 / Custom Skills / Subagent를 활용한 4주 학습 프로젝트.
     │
     ▼
 메인 에이전트 (Claude)
-    ├─ [MCP] 메트릭 서버  ─── CCU, 매치메이킹 큐, 에러율, 레이턴시
+    ├─ [MCP] 메트릭 서버  ─── CCU, 매치메이킹 큐, 에러율, 레이턴시  ✅
     ├─ [MCP] 인시던트 DB  ─── 과거 장애 이력 · 해결 방법
     └─ [MCP] 로그 검색    ─── Loki/Elastic 모킹
     │
@@ -30,21 +140,14 @@ MCP 서버 / Custom Skills / Subagent를 활용한 4주 학습 프로젝트.
 [Subagent] 포스트모템 작성자  ─── 결과 정리 · 문서 자동 생성
 ```
 
-## 핵심 시나리오
-
-> "지금 매치메이킹 큐가 평소보다 길어. 원인 파악하고 대응 방안 알려줘"
-
-1. 메인 에이전트가 **메트릭 서브에이전트** + **로그 서브에이전트** 병렬 호출
-2. 양쪽 결과를 종합해 병목 원인 특정
-3. **인시던트 대응 Skill** 참조 → 단계별 완화·복구 가이드 출력
-4. 인시던트 종료 후 **포스트모템 서브에이전트**가 문서 자동 생성
+---
 
 ## 구성 요소
 
 ### MCP 서버
 | 서버 | 역할 | 상태 |
 |------|------|------|
-| `metrics_server` | CCU · 매치메이킹 큐 · 에러율 · 레이턴시 제공 | 미구현 |
+| `metrics_server` | CCU · 매치메이킹 큐 · 에러율 · 레이턴시 제공 | ✅ 완료 |
 | `incident_db_server` | 과거 장애 이력 · 해결 방법 조회 | 미구현 |
 | `log_search_server` | Loki/Elastic 모킹, 로그 검색 | 미구현 |
 
@@ -61,10 +164,12 @@ MCP 서버 / Custom Skills / Subagent를 활용한 4주 학습 프로젝트.
 | `incident_response` | 단계별 진단·완화·복구 절차 | 미구현 |
 | `postmortem_guide` | 포스트모템 템플릿 · 작성법 | 미구현 |
 
+---
+
 ## 진행 상황
 - [x] Day 1: 환경 셋업
-- [ ] Day 2: MCP 서버 1 — 메트릭 서버 기본 구현
-- [ ] Day 3: 모킹 데이터 생성기 (시드 기반 결정적 데이터)
+- [x] Day 2: MCP 서버 1 — 메트릭 서버 + 모킹 데이터 생성기
+- [ ] Day 3: 모킹 시나리오 (정상 vs 인시던트 상태)
 - [ ] Day 4: MCP 서버 2 — 인시던트 DB 서버
 - [ ] Day 5: MCP 서버 3 — 로그 검색 서버
 - [ ] Week 2: Skills 2종 구현 (인시던트 대응, 포스트모템)
