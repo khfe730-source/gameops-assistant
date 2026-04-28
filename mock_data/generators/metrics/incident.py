@@ -4,7 +4,7 @@ import hashlib
 import random
 from datetime import datetime
 
-from mock_data.generators.normal import metrics_generator
+from mock_data.generators.metrics import normal as metrics_generator
 
 
 def _make_rng(seed: int, ts: datetime, salt: str) -> random.Random:

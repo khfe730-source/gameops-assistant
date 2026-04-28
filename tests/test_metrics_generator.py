@@ -1,8 +1,8 @@
-"""Tests for mock_data.generators.normal.metrics_generator."""
+"""Tests for mock_data.generators.metrics.normal."""
 
 from datetime import datetime
 
-from mock_data.generators.normal.metrics_generator import (
+from mock_data.generators.metrics.normal import (
     generate_ccu,
     generate_error_rate,
     generate_latency,
