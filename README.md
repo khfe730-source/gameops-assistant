@@ -162,24 +162,46 @@ uv run ruff check .
 
 ## 아키텍처
 
+### incident-response 오케스트레이션 흐름
+
 ```
-사용자 질의
-    │
-    ▼
-메인 에이전트 (Claude)
-    ├─ [MCP] 메트릭 서버  ─── CCU, 매치메이킹 큐, 에러율, 레이턴시  ✅
-    ├─ [MCP] 인시던트 DB  ─── 과거 장애 이력 · 해결 방법  ✅
-    └─ [MCP] 로그 검색    ─── Loki/Elastic 모킹  ✅
-    │
-    ├─ [Subagent] 메트릭 분석 전문가  ┐ 병렬 실행
-    └─ [Subagent] 로그 분석 전문가    ┘
-    │
-    ├─ [Skill] 인시던트 대응 절차  ─── 단계별 진단·완화·복구
-    └─ [Skill] 포스트모템 작성 가이드
-    │
-    ▼
-[Subagent] 포스트모템 작성자  ─── 결과 정리 · 문서 자동 생성
+사용자: "서버 상태 어때?"
+        │
+        ▼
+┌─────────────────────────────────────────┐
+│         incident-response SKILL         │
+│              (오케스트레이터)            │
+│                                         │
+│  Step 1                                 │
+│  ┌──────────────────────┐               │
+│  │    metrics-analyst   │               │
+│  │      서브에이전트     │               │
+│  │  metrics MCP만 접근  │               │
+│  └──────────┬───────────┘               │
+│             │ 이상 지표 JSON             │
+│             ▼                           │
+│  Step 2                                 │
+│  ┌──────────────────────┐               │
+│  │   log-investigator   │               │
+│  │      서브에이전트     │               │
+│  │  log_search MCP만 접근│              │
+│  └──────────┬───────────┘               │
+│             │ 에러 패턴 JSON             │
+│             ▼                           │
+│  Step 3                                 │
+│  ┌──────────────────────┐               │
+│  │  incident-classifier │               │
+│  │      서브에이전트     │               │
+│  │  incident_db MCP만 접근│             │
+│  └──────────┬───────────┘               │
+│             │ 타입·심각도·대응방안 JSON  │
+│             ▼                           │
+│  Step 4: 진단 리포트 출력               │
+└─────────────────────────────────────────┘
 ```
+
+각 서브에이전트는 자기 담당 MCP 서버에만 접근할 수 있어 컨텍스트가 격리된다.
+메인 컨텍스트에는 원시 데이터 대신 JSON 요약만 전달된다.
 
 ---
 
@@ -197,6 +219,7 @@ uv run ruff check .
 |----------|------|------|
 | `metrics_analyst` | 이상 패턴 탐지 · 메트릭 해석 | ✅ 완료 |
 | `log_investigator` | 에러 원인 추적 · 로그 파싱 | ✅ 완료 |
+| `incident_classifier` | 타입 확정 · 과거 사례 조회 · 대응방안 도출 | ✅ 완료 |
 | `postmortem_writer` | 인시던트 결과 정리 · 문서 생성 | 미구현 |
 
 ### Skills
@@ -217,7 +240,8 @@ uv run ruff check .
 - [x] Skill 2 — 포스트모템 (`postmortem`)
 - [x] Subagent 1 — 메트릭 분석 (`metrics_analyst`)
 - [x] Subagent 2 — 로그 분석 (`log_investigator`)
-- [ ] Subagent 3 — 포스트모템 작성 (`postmortem_writer`)
+- [x] Subagent 3 — 인시던트 분류 (`incident_classifier`)
+- [ ] Subagent 4 — 포스트모템 작성 (`postmortem_writer`)
 - [ ] 전체 시나리오 통합 테스트 · 문서화
 
 ## 라이선스
