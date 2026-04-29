@@ -19,7 +19,7 @@ gameops-assistant/
 │   ├── __init__.py
 │   ├── metrics_server.py       # CCU · 큐 · 에러율 · 레이턴시 (구현 완료)
 │   ├── incident_db_server.py   # 과거 장애 이력 조회 (구현 완료)
-│   └── log_search_server.py    # 로그 검색 Loki/Elastic 모킹 (미구현)
+│   └── log_search_server.py    # 로그 검색 Loki/Elastic 모킹 (구현 완료)
 │
 ├── mock_data/                  # 결정적 가짜 데이터 생성기
 │   ├── __init__.py
@@ -28,8 +28,10 @@ gameops-assistant/
 │   │   ├── metrics/
 │   │   │   ├── normal.py              # 정상 상태 메트릭 생성기 (구현 완료)
 │   │   │   └── incident.py            # 인시던트 상태 메트릭 생성기 (구현 완료)
-│   │   └── incident_db/
-│   │       └── records.py             # 과거 인시던트 정적 레코드 + 쿼리 함수 (구현 완료)
+│   │   ├── incident_db/
+│   │   │   └── records.py             # 과거 인시던트 정적 레코드 + 쿼리 함수 (구현 완료)
+│   │   └── logs/
+│   │       └── entries.py             # 시나리오별 로그 엔트리 생성기 + 쿼리 함수 (구현 완료)
 │   └── fixtures/               # 시나리오별 정적 스냅샷 JSON (구현 완료)
 │
 ├── .claude/
@@ -152,6 +154,7 @@ uv run ruff check .
 | `mock_data/generators/metrics/normal.py` | `tests/test_metrics_generator.py` | 14 |
 | `mock_data/scenarios.py` + `generators/metrics/incident.py` | `tests/test_scenarios.py` | 22 |
 | `mock_data/generators/incident_db/records.py` | `tests/test_incident_db.py` | 18 |
+| `mock_data/generators/logs/entries.py` | `tests/test_log_search.py` | 35 |
 
 ---
 
@@ -164,7 +167,7 @@ uv run ruff check .
 메인 에이전트 (Claude)
     ├─ [MCP] 메트릭 서버  ─── CCU, 매치메이킹 큐, 에러율, 레이턴시  ✅
     ├─ [MCP] 인시던트 DB  ─── 과거 장애 이력 · 해결 방법  ✅
-    └─ [MCP] 로그 검색    ─── Loki/Elastic 모킹
+    └─ [MCP] 로그 검색    ─── Loki/Elastic 모킹  ✅
     │
     ├─ [Subagent] 메트릭 분석 전문가  ┐ 병렬 실행
     └─ [Subagent] 로그 분석 전문가    ┘
@@ -185,7 +188,7 @@ uv run ruff check .
 |------|------|------|
 | `metrics_server` | CCU · 매치메이킹 큐 · 에러율 · 레이턴시 제공 | ✅ 완료 |
 | `incident_db_server` | 과거 장애 이력 · 해결 방법 조회 | ✅ 완료 |
-| `log_search_server` | Loki/Elastic 모킹, 로그 검색 | 미구현 |
+| `log_search_server` | Loki/Elastic 모킹, 로그 검색 | ✅ 완료 |
 
 ### Subagent
 | 에이전트 | 역할 | 상태 |
@@ -207,7 +210,7 @@ uv run ruff check .
 - [x] Day 2: MCP 서버 1 — 메트릭 서버 + 모킹 데이터 생성기
 - [x] Day 3: 모킹 시나리오 (정상 vs 인시던트 상태)
 - [x] Day 4: MCP 서버 2 — 인시던트 DB 서버
-- [ ] Day 5: MCP 서버 3 — 로그 검색 서버
+- [x] Day 5: MCP 서버 3 — 로그 검색 서버
 - [ ] Week 2: Skills 2종 구현 (인시던트 대응, 포스트모템)
 - [ ] Week 3: Subagent 3종 구현 + 병렬 호출 연동
 - [ ] Week 4: 전체 시나리오 통합 테스트 · 문서화
