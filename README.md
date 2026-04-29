@@ -36,7 +36,9 @@ gameops-assistant/
 │
 ├── .claude/
 │   ├── agents/                 # Custom Subagent 정의 (markdown)
-│   └── skills/                 # Skills — 절차적 지식 주입
+│   └── skills/
+│       ├── incident-response/  # 단계별 인시던트 진단·대응 (구현 완료)
+│       └── postmortem/         # 인시던트 사후 분석 문서 작성 (구현 완료)
 │
 ├── tests/
 │   ├── test_metrics_generator.py
@@ -201,7 +203,7 @@ uv run ruff check .
 | 스킬 | 역할 | 상태 |
 |------|------|------|
 | `incident-response` | 메트릭·로그·과거사례 기반 단계별 진단·대응 | ✅ 완료 |
-| `postmortem` | 포스트모템 템플릿 · 작성법 | 미구현 |
+| `postmortem` | 타임라인·근본원인·재발방지 액션 아이템 포함 사후 분석 문서 작성 | ✅ 완료 |
 
 ---
 
@@ -212,7 +214,7 @@ uv run ruff check .
 - [x] MCP 서버 2 — 인시던트 DB 서버
 - [x] MCP 서버 3 — 로그 검색 서버
 - [x] Skill 1 — 인시던트 대응 (`incident-response`)
-- [ ] Skill 2 — 포스트모템 (`postmortem`)
+- [x] Skill 2 — 포스트모템 (`postmortem`)
 - [ ] Subagent 1 — 메트릭 분석 (`metrics_analyst`)
 - [ ] Subagent 2 — 로그 분석 (`log_analyst`)
 - [ ] Subagent 3 — 포스트모템 작성 (`postmortem_writer`)
