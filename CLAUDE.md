@@ -37,6 +37,7 @@
 
 ## Subagent 목록
 - `.claude/agents/metrics-analyst.md`: 메트릭 4종 동시 수집 → 이상 탐지 → JSON 요약 반환
+- `.claude/agents/log-investigator.md`: 지정 서비스 에러 로그 집중 수집 → 패턴 분석 → JSON 반환
 
 ## Skills 목록
 - `.claude/skills/incident-response/`: 메트릭·로그·과거사례 기반 단계별 인시던트 진단 및 대응
