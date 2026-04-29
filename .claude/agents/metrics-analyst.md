@@ -25,7 +25,9 @@ tools: mcp__metrics__get_ccu_metrics, mcp__metrics__get_error_rate_metrics, mcp_
 
 ## 출력 형식
 
-반드시 아래 JSON 블록 하나만 출력한다. 설명 텍스트는 추가하지 않는다.
+**JSON 블록만 출력한다. 다른 텍스트 일절 금지.**
+인사말, 설명, 판정 근거, 권고 문구 — 어떤 형태의 추가 텍스트도 출력하지 않는다.
+JSON 앞뒤로 아무것도 쓰지 않는다.
 
 ```json
 {
