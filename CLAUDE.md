@@ -33,6 +33,7 @@
 ## MCP 서버 목록
 - `mcp_servers/metrics_server.py`: CCU · 매치메이킹 큐 · 에러율 · 레이턴시
 - `mcp_servers/incident_db_server.py`: 과거 인시던트 이력 조회 (list/get/search/resolutions)
+- `mcp_servers/log_search_server.py`: 게임 서버 로그 검색 Loki/Elastic 모킹 (search/error/stats/tail)
 
 ## Subagent 목록
 (아직 없음 - Week 3부터 추가)
