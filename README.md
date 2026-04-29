@@ -200,20 +200,23 @@ uv run ruff check .
 ### Skills
 | 스킬 | 역할 | 상태 |
 |------|------|------|
-| `incident_response` | 단계별 진단·완화·복구 절차 | 미구현 |
-| `postmortem_guide` | 포스트모템 템플릿 · 작성법 | 미구현 |
+| `incident-response` | 메트릭·로그·과거사례 기반 단계별 진단·대응 | ✅ 완료 |
+| `postmortem` | 포스트모템 템플릿 · 작성법 | 미구현 |
 
 ---
 
 ## 진행 상황
-- [x] Day 1: 환경 셋업
-- [x] Day 2: MCP 서버 1 — 메트릭 서버 + 모킹 데이터 생성기
-- [x] Day 3: 모킹 시나리오 (정상 vs 인시던트 상태)
-- [x] Day 4: MCP 서버 2 — 인시던트 DB 서버
-- [x] Day 5: MCP 서버 3 — 로그 검색 서버
-- [ ] Week 2: Skills 2종 구현 (인시던트 대응, 포스트모템)
-- [ ] Week 3: Subagent 3종 구현 + 병렬 호출 연동
-- [ ] Week 4: 전체 시나리오 통합 테스트 · 문서화
+- [x] 환경 셋업
+- [x] MCP 서버 1 — 메트릭 서버 + 모킹 데이터 생성기
+- [x] 모킹 시나리오 (정상 vs 인시던트 상태)
+- [x] MCP 서버 2 — 인시던트 DB 서버
+- [x] MCP 서버 3 — 로그 검색 서버
+- [x] Skill 1 — 인시던트 대응 (`incident-response`)
+- [ ] Skill 2 — 포스트모템 (`postmortem`)
+- [ ] Subagent 1 — 메트릭 분석 (`metrics_analyst`)
+- [ ] Subagent 2 — 로그 분석 (`log_analyst`)
+- [ ] Subagent 3 — 포스트모템 작성 (`postmortem_writer`)
+- [ ] 전체 시나리오 통합 테스트 · 문서화
 
 ## 라이선스
 MIT
