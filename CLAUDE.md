@@ -36,7 +36,7 @@
 - `mcp_servers/log_search_server.py`: 게임 서버 로그 검색 Loki/Elastic 모킹 (search/error/stats/tail)
 
 ## Subagent 목록
-(아직 없음 - Week 3부터 추가)
+- `.claude/agents/metrics-analyst.md`: 메트릭 4종 동시 수집 → 이상 탐지 → JSON 요약 반환
 
 ## Skills 목록
 - `.claude/skills/incident-response/`: 메트릭·로그·과거사례 기반 단계별 인시던트 진단 및 대응

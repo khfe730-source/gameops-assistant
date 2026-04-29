@@ -195,7 +195,7 @@ uv run ruff check .
 ### Subagent
 | 에이전트 | 역할 | 상태 |
 |----------|------|------|
-| `metrics_analyst` | 이상 패턴 탐지 · 메트릭 해석 | 미구현 |
+| `metrics_analyst` | 이상 패턴 탐지 · 메트릭 해석 | ✅ 완료 |
 | `log_analyst` | 에러 원인 추적 · 로그 파싱 | 미구현 |
 | `postmortem_writer` | 인시던트 결과 정리 · 문서 생성 | 미구현 |
 
@@ -215,7 +215,7 @@ uv run ruff check .
 - [x] MCP 서버 3 — 로그 검색 서버
 - [x] Skill 1 — 인시던트 대응 (`incident-response`)
 - [x] Skill 2 — 포스트모템 (`postmortem`)
-- [ ] Subagent 1 — 메트릭 분석 (`metrics_analyst`)
+- [x] Subagent 1 — 메트릭 분석 (`metrics_analyst`)
 - [ ] Subagent 2 — 로그 분석 (`log_analyst`)
 - [ ] Subagent 3 — 포스트모템 작성 (`postmortem_writer`)
 - [ ] 전체 시나리오 통합 테스트 · 문서화
