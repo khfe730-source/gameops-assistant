@@ -39,7 +39,8 @@
 (아직 없음 - Week 3부터 추가)
 
 ## Skills 목록
-(아직 없음 - Week 2부터 추가)
+- `.claude/skills/incident-response/`: 메트릭·로그·과거사례 기반 단계별 인시던트 진단 및 대응
+- `.claude/skills/postmortem/`: (미구현) 포스트모템 문서 작성 가이드
 
 ## 협업 규칙 (Claude ↔ 사용자)
 
