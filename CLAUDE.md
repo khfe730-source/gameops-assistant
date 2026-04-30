@@ -39,6 +39,7 @@
 - `.claude/agents/metrics-analyst.md`: 메트릭 4종 동시 수집 → 이상 탐지 → JSON 요약 반환
 - `.claude/agents/log-investigator.md`: 지정 서비스 에러 로그 집중 수집 → 패턴 분석 → JSON 반환
 - `.claude/agents/incident-classifier.md`: metrics + log JSON 수신 → 타입 확정 → 과거 사례·대응방안 JSON 반환
+- `.claude/agents/postmortem-writer.md`: 인시던트 컨텍스트 수신 → 과거 사례 조회 + 현재 지표 재확인 동시 수행 → JSON 반환
 
 ## Skills 목록
 - `.claude/skills/incident-response/`: 메트릭·로그·과거사례 기반 단계별 인시던트 진단 및 대응
