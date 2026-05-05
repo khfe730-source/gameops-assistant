@@ -36,6 +36,10 @@ gameops-assistant/
 │
 ├── .claude/
 │   ├── agents/                 # Custom Subagent 정의 (markdown)
+│   │   ├── metrics-analyst.md      # 메트릭 이상 탐지 (구현 완료)
+│   │   ├── log-investigator.md     # 로그 패턴 분석 (구현 완료)
+│   │   ├── incident-classifier.md  # 인시던트 타입 확정 (구현 완료)
+│   │   └── postmortem-writer.md    # 포스트모템 데이터 수집 (구현 완료)
 │   └── skills/
 │       ├── incident-response/  # 단계별 인시던트 진단·대응 (구현 완료)
 │       └── postmortem/         # 인시던트 사후 분석 문서 작성 (구현 완료)
@@ -200,6 +204,38 @@ uv run ruff check .
 └─────────────────────────────────────────┘
 ```
 
+### postmortem 오케스트레이션 흐름
+
+```
+사용자: "/postmortem"
+        │
+        ▼
+┌─────────────────────────────────────────┐
+│           postmortem SKILL              │
+│              (오케스트레이터)            │
+│                                         │
+│  Step 1: 인시던트 컨텍스트 확인          │
+│  (대화 맥락 추출, 누락 항목만 질문)       │
+│             │                           │
+│             ▼                           │
+│  Step 2                                 │
+│  ┌──────────────────────┐               │
+│  │   postmortem-writer  │               │
+│  │      서브에이전트     │               │
+│  │  ┌──────────────────┐│               │
+│  │  │ [동시] 과거 사례   ││               │
+│  │  │ search + steps   ││               │
+│  │  ├──────────────────┤│               │
+│  │  │ [동시] 현재 지표   ││               │
+│  │  │ 4개 metrics 툴   ││               │
+│  │  └──────────────────┘│               │
+│  └──────────┬───────────┘               │
+│             │ 포스트모템 데이터 JSON      │
+│             ▼                           │
+│  Step 3: 포스트모템 문서 출력            │
+└─────────────────────────────────────────┘
+```
+
 각 서브에이전트는 자기 담당 MCP 서버에만 접근할 수 있어 컨텍스트가 격리된다.
 메인 컨텍스트에는 원시 데이터 대신 JSON 요약만 전달된다.
 
@@ -220,7 +256,7 @@ uv run ruff check .
 | `metrics_analyst` | 이상 패턴 탐지 · 메트릭 해석 | ✅ 완료 |
 | `log_investigator` | 에러 원인 추적 · 로그 파싱 | ✅ 완료 |
 | `incident_classifier` | 타입 확정 · 과거 사례 조회 · 대응방안 도출 | ✅ 완료 |
-| `postmortem_writer` | 인시던트 결과 정리 · 문서 생성 | 미구현 |
+| `postmortem_writer` | 과거 사례 조회 + 현재 지표 재확인 → 포스트모템 JSON 반환 | ✅ 완료 |
 
 ### Skills
 | 스킬 | 역할 | 상태 |
@@ -241,7 +277,7 @@ uv run ruff check .
 - [x] Subagent 1 — 메트릭 분석 (`metrics_analyst`)
 - [x] Subagent 2 — 로그 분석 (`log_investigator`)
 - [x] Subagent 3 — 인시던트 분류 (`incident_classifier`)
-- [ ] Subagent 4 — 포스트모템 작성 (`postmortem_writer`)
+- [x] Subagent 4 — 포스트모템 작성 (`postmortem_writer`)
 - [ ] 전체 시나리오 통합 테스트 · 문서화
 
 ## 라이선스

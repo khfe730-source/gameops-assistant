@@ -8,6 +8,10 @@ description: Game server incident postmortem (사후 분석) document creation. 
 인시던트 종료 후 사후 분석 문서를 작성하는 절차.
 `/incident-response` 진단 리포트 결과를 이어받아 실행하는 것이 이상적이다.
 
+```
+postmortem-writer (subagent) → 문서 출력
+```
+
 ## Step 1: 인시던트 컨텍스트 확인
 
 대화 맥락에서 아래 정보를 추출한다.
@@ -21,23 +25,29 @@ description: Game server incident postmortem (사후 분석) document creation. 
 | 해소 시각 (UTC) | 사용자 입력 |
 | 적용한 해결 조치 | `/incident-response` 즉각 대응 방안 또는 사용자 입력 |
 
-## Step 2: 과거 사례 및 해결책 조회
+## Step 2: postmortem-writer 서브에이전트 호출
 
-두 툴을 **동시에** 호출한다.
+`postmortem-writer` 서브에이전트를 호출해 과거 사례 조회와 현재 지표 재확인을 위임한다.
 
-- `search_incidents_by_type(incident_type)` — 같은 타입 과거 인시던트 목록
-- `get_resolution_steps(incident_type)` — 검증된 해결 방안 + lessons_learned
+프롬프트에 아래 세 값을 명시해 전달한다.
 
-## Step 3: 현재 지표 재확인 (해소 검증)
+- `incident_type`: Step 1에서 확정한 인시던트 타입
+- `peak_metrics`: Step 1에서 수집한 인시던트 중 최고 지표값 (없으면 null)
+- `applied_steps`: Step 1에서 수집한 적용 조치 목록 (없으면 빈 배열)
 
-4개 메트릭 툴을 **동시에** 호출해 지표가 정상으로 돌아왔는지 확인한다.
+반환된 JSON에서 다음 값을 추출한다.
 
-- `get_ccu_metrics`
-- `get_error_rate_metrics`
-- `get_latency_metrics`
-- `get_matchmaking_queue_metrics`
+- `current_metrics`: 현재 지표 스냅샷 + `all_normal` 플래그
+- `past_incidents`: 과거 동일 타입 인시던트 목록
+- `resolution_steps`: 검증된 해결 방안
+- `lessons_learned`: 가장 최근 사례 교훈
+- `affected_services`: 영향 서비스 목록
 
-## Step 4: 포스트모템 문서 출력
+## Step 3: 포스트모템 문서 출력
+
+`current_metrics.all_normal` 이 `false` 이면 문서 최상단에 아래 경고를 추가한다.
+
+> **주의: 인시던트가 아직 완전히 해소되지 않았을 수 있습니다.**
 
 아래 형식을 반드시 사용한다. 수집한 실제 수치와 과거 사례 데이터로 각 섹션을 채운다.
 
@@ -74,24 +84,24 @@ description: Game server incident postmortem (사후 분석) document creation. 
 | 매치메이킹 대기 | | < 60s | 🔴 |
 | p99 레이턴시 (최악 zone) | | < 200ms | 🔴 |
 
-- 영향 받은 서비스: (Step 2 과거 사례 기반으로 나열)
+- 영향 받은 서비스: (`past_incidents` + `affected_services` 기반으로 나열)
 - 추정 영향 유저 수: (인시던트 당시 CCU 기반 추정)
 
 ### 4. 근본 원인 (Root Cause)
 
-(과거 사례 `resolution_steps` 및 `lessons_learned`를 바탕으로 이번 인시던트의 근본 원인 서술.
+(`past_incidents` 및 `lessons_learned`를 바탕으로 이번 인시던트의 근본 원인 서술.
 단순 증상 설명이 아니라 "왜 그런 증상이 발생했는가"를 기술한다.)
 
 ### 5. 해결 과정
 
-(Step 2 `resolution_steps` 중 이번에 실제로 적용한 조치를 순서대로 기술)
+(`resolution_steps` 중 이번에 실제로 적용한 조치를 순서대로 기술)
 
 1. ...
 2. ...
 
 ### 6. 재발 방지 액션 아이템
 
-(과거 사례 `lessons_learned` 기반으로 구체적이고 실행 가능한 액션을 도출한다.
+(`lessons_learned` 기반으로 구체적이고 실행 가능한 액션을 도출한다.
 담당자와 기한은 "TBD"로 표기해도 된다.)
 
 | # | 액션 | 담당 | 기한 |
@@ -101,7 +111,7 @@ description: Game server incident postmortem (사후 분석) document creation. 
 
 ### 7. 현재 지표 (해소 확인)
 
-Step 3 재조회 결과로 채운다.
+`current_metrics` 재조회 결과로 채운다.
 
 | 지표 | 현재값 | 정상 범위 | 상태 |
 |------|--------|----------|------|
@@ -109,8 +119,6 @@ Step 3 재조회 결과로 채운다.
 | 에러율 | | < 1% | ✅ / ⚠️ / 🔴 |
 | 매치메이킹 대기 | | < 60s | ✅ / ⚠️ / 🔴 |
 | p99 레이턴시 | | < 200ms | ✅ / ⚠️ / 🔴 |
-
-지표 중 하나라도 🔴 이면 "**주의: 인시던트가 아직 완전히 해소되지 않았을 수 있습니다.**"를 문서 최상단에 추가한다.
 
 ---
 
