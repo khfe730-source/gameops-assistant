@@ -161,6 +161,7 @@ uv run ruff check .
 | `mock_data/scenarios.py` + `generators/metrics/incident.py` | `tests/test_scenarios.py` | 22 |
 | `mock_data/generators/incident_db/records.py` | `tests/test_incident_db.py` | 18 |
 | `mock_data/generators/logs/entries.py` | `tests/test_log_search.py` | 35 |
+| MCP 서버 3종 × 시나리오 5종 통합 | `tests/test_mcp_integration.py` | 32 |
 
 ---
 
@@ -278,7 +279,7 @@ uv run ruff check .
 - [x] Subagent 2 — 로그 분석 (`log_investigator`)
 - [x] Subagent 3 — 인시던트 분류 (`incident_classifier`)
 - [x] Subagent 4 — 포스트모템 작성 (`postmortem_writer`)
-- [ ] 전체 시나리오 통합 테스트 · 문서화
+- [x] 전체 시나리오 통합 테스트 (`test_mcp_integration.py` — 32 케이스)
 
 ## 라이선스
 MIT
