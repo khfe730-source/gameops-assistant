@@ -17,6 +17,7 @@ __pycache__/
 
 # Project
 mock_data/runtime/
+postmortems/
 *.log
 
 # MCP 서버 설정 (로컬 테스트 시나리오마다 달라짐)
